@@ -1,1 +1,1 @@
-web: gunicorn sukejuru.wsgi
+web: gunicorn sukejuru/sukejuru.wsgi
