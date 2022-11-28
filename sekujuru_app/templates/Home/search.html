@@ -1,0 +1,186 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'index/home.css' %}" type = "text/css">
+
+{% block content %}
+
+<body>
+    <div style="padding-left : 40px ; padding-top : 20px">
+        <form action="{% url 'search' %}" method="get">
+            <input name="q" type="text" placeholder="Search...">
+
+            <select name="platform">
+                <option value="All">All</option>
+                {% for pf in platform %}    
+                    <option value={{pf.name}}>{{pf.name}}</option>
+                {% endfor %}    
+            </select>
+
+            <select name="genre">
+                <option value="All">All</option>
+                {% for gn in genre %}
+                    <option value={{gn.name}}>{{gn.name}}</option>
+                {% endfor %}
+            </select>
+
+            <select name="season">
+                <option value="All">All</option>
+                {% for ss in season %}
+                    <option value={{ss.name}}>{{ss.name}}</option>
+                {% endfor %}
+            </select>
+
+            <select name="rating">
+                <option value="All">All</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="2">2 Stars</option>
+                <option value="1">1 Star</option>
+            </select>
+
+            <select name="day">
+                <option value="All">All</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuseday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
+
+            <input type="submit" value="Search">
+        </form>
+    </div>
+
+
+    {% comment %} {% for i in result %}
+        <a style="padding-left : 40px" href="home/{{i.anime_id}}"><h5 style="padding-left : 40px"> {{ i.anime_name }} </h5></a> <br>
+    <bodyth>
+        <p style="padding-left : 40px"> {{ i.description }} </p> <br>
+    </bodyth> {% endcomment %}
+
+    <!-- Section-->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                {% for anime in result %}
+                <div class="col mb-5">
+                    <div class="card h-100">
+                        {% if request.user.is_authenticated %}
+                        {% if anime in fav_ani %}
+                        <div class="btns position-absolute" style="top: 0.5rem; left: 0.5rem;">
+                            <button onclick="Toggle('{{ anime.anime_name }}')" id="{{ anime.anime_name }}" class="fav_btn" style="color:yellow; background-color: transparent; border-color: transparent;">
+                                <i type="button" class="bi bi-star-fill" style="font-size: 20px; -webkit-text-stroke-width: 1.5px; -webkit-text-stroke-color: black;"></i>
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="btns position-absolute" style="top: 0.5rem; left: 0.5rem;">
+                            <button onclick="Toggle('{{ anime.anime_name }}')" id="{{ anime.anime_name }}" class="fav_btn" style="color:white; background-color: transparent; border-color: transparent;">
+                                <i type="button" class="bi bi-star-fill" style="font-size: 20px; -webkit-text-stroke-width: 1.5px; -webkit-text-stroke-color: black;"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        <script>
+                            function Toggle(id){
+                                var data = id
+                                var fav_btn = document.getElementById(id)
+                                if (fav_btn.style.color == "white") {
+                                    fav_btn.style.color = "yellow";
+
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '{% url 'favorite' %}',
+                                        data: {'data': data,
+                                            'csrfmiddlewaretoken': '{{ csrf_token }}',}
+                                    });
+                                }
+                                else {
+                                    fav_btn.style.color = "white";
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '{% url 'remove_favorite' %}',
+                                        data: {'data': data,
+                                            'csrfmiddlewaretoken': '{{ csrf_token }}',}
+                                    });
+                                }
+                            }
+                        </script>
+
+                        {% endif %}
+                        <!-- Sale badge-->
+                        {% if anime.rating == 5 %}
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Recommended</div>
+                        {% endif %}
+                        <!-- Anime image-->
+                        <img class="card-img-top" src={{anime.anime_image}} alt="..." />
+                        <!-- Anime details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Anime name-->
+                                <h5 class="fw-bolder">{{anime.anime_name}}</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2" id={{anime.anime_id}}>
+                                    <script>
+                                        var x="";
+                                        for (let i=1; i<={{anime.rating}}; i++) {
+                                            x += '<div class="bi-star-fill"></div>';
+                                        }
+                                        document.getElementById({{anime.anime_id}}).innerHTML = x;
+                                    </script>
+                                </div>
+                                <!-- Anime description-->
+                                {{anime.description}}
+                            </div>
+                        </div>
+                        <!-- Actions -->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center">
+                                <a class="btn btn-outline-dark mt-auto" href="home/{{anime.anime_id}}">Details</a>                                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Coming Soon Card -->
+                <div class="col mb-5">
+                    <div class="card h-100">
+                        <!-- Sale badge-->
+                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Coming soon</div>
+                        <!-- Anime image-->
+                        <img class="card-img-top" src="https://mastermind.fims.uwo.ca/wp-content/uploads/2019/04/coming-soon-1.jpg" alt="..." />
+                        <!-- Anime details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Anime name-->
+                                <h5 class="fw-bolder">Coming soon</h5>
+                                <!-- Anime reviews-->
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    <div class="bi-star-nofill"></div>
+                                    <div class="bi-star-nofill"></div>
+                                    <div class="bi-star-nofill"></div>
+                                    <div class="bi-star-nofill"></div>
+                                    <div class="bi-star-nofill"></div>
+                                </div>
+                                <!-- Anime description-->
+                                -------------
+                            </div>
+                        </div>
+                        <!-- Anime actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="">Coming soon</a></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</body>
+
+
+{% endblock %}

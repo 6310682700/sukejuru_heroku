@@ -1,0 +1,195 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'index/home.css' %}" type = "text/css">
+
+{% block content %}
+<section class="py-5">
+<div id="countdownBox" class="text-center mt-3 h1">
+    <div class="spinner-border" role="status"></div>
+</div>
+<div class="container px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        <div class="col mb-5">
+            <div class="card h-100">
+                <!-- Sale badge-->
+                {% if anime.rating == 5 %}
+                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Recommended</div>
+                {% endif %}
+                <!-- Anime image-->
+                <img class="card-img-top" src={{anime_today.anime_image}} alt="..." />
+                <!-- Anime details-->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <!-- Anime name-->
+                        <h5 class="fw-bolder">{{anime_today.anime_name}}</h5>
+                        <div class="d-flex justify-content-center small text-warning mb-2" id={{anime.anime_id}}>
+                            <script>
+                                var x="";
+                                for (let i=1; i<={{anime_today.rating}}; i++) {
+                                    x += '<div class="bi-star-fill"></div>';
+                                }
+                                document.getElementById({{anime_today.anime_id}}).innerHTML = x;
+                            </script>
+                        </div>
+                        <!-- Anime description-->
+                        {{anime.description}}
+                    </div>
+                </div>
+                <!-- Actions -->
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center">
+                        <a class="btn btn-outline-dark mt-auto" href="home/{{anime_today.anime_id}}">Details</a>                                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+   <form action="" method="GET" style="padding-left : 40px;">
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="All">Show all</button>
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="Monday">Monday</button>
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="Tuesday">Tuesday</button>
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="Wednesday">Wednesday</button>
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="Thursday">Thursday</button>
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="Friday">Friday</button>
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="Saturday">Saturday</button>
+      <button class="btn btn-outline-dark mt-auto" name="day" type="submit" value="Sunday">Sunday</button>    
+  </form>
+
+   <h3 class="text-center mt-3 h1">{{select_day}}</h3>
+
+   <div class="container px-4 px-lg-5 mt-5">
+       <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+         
+           {% for anime in Anime %}
+           <div class="col mb-5">
+               <div class="card h-100">
+                {% if request.user.is_authenticated %}
+                {% if anime in fav_list %}
+                <div class="btns position-absolute" style="top: 0.5rem; left: 0.5rem;">
+                    <button onclick="Toggle('{{ anime.anime_name }}')" id="{{ anime.anime_name }}" class="fav_btn" style="color:yellow; background-color: transparent; border-color: transparent;">
+                        <i type="button" class="bi bi-star-fill" style="font-size: 20px; -webkit-text-stroke-width: 1.5px; -webkit-text-stroke-color: black;"></i>
+                    </button>
+                </div>
+                {% else %}
+                <div class="btns position-absolute" style="top: 0.5rem; left: 0.5rem;">
+                    <button onclick="Toggle('{{ anime.anime_name }}')" id="{{ anime.anime_name }}" class="fav_btn" style="color:white; background-color: transparent; border-color: transparent;">
+                        <i type="button" class="bi bi-star-fill" style="font-size: 20px; -webkit-text-stroke-width: 1.5px; -webkit-text-stroke-color: black;"></i>
+                    </button>
+                </div>
+                {% endif %}
+
+                <script>
+                    function Toggle(id){
+                        var data = id
+                        var fav_btn = document.getElementById(id)
+                        if (fav_btn.style.color == "white") {
+                            fav_btn.style.color = "yellow";
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '{% url 'favorite' %}',
+                                data: {'data': data,
+                                    'csrfmiddlewaretoken': '{{ csrf_token }}',}
+                            });
+                        }
+                        else {
+                            fav_btn.style.color = "white";
+                            $.ajax({
+                                type: 'POST',
+                                url: '{% url 'remove_favorite' %}',
+                                data: {'data': data,
+                                    'csrfmiddlewaretoken': '{{ csrf_token }}',}
+                            });
+                        }
+                    }
+                </script>
+
+                {% endif %}
+                   <!-- Sale badge-->
+                   {% if anime.rating == 5 %}
+                   <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Recommended</div>
+                   {% endif %}
+                   {% for day in anime.day.all %}                   
+                   <div class="badge bg-dark text-white position-absolute" style="top: 2rem; right: 0.5rem">{{day.name}} {{anime.time|date:"G:i"}}</div>
+                   {% endfor %}
+                   <!-- Anime image-->
+                   <img class="card-img-top" src={{anime.anime_image}} alt="..." />
+                   <!-- Anime details-->
+                   <div class="card-body p-4">
+                       <div class="text-center">
+                           <!-- Anime name-->
+                           <h5 class="fw-bolder">{{anime.anime_name}}</h5>
+                           <div class="d-flex justify-content-center small text-warning mb-2" id={{anime.anime_id}}>
+                               <script>
+                                   var x="";
+                                   for (let i=1; i<={{anime.rating}}; i++) {
+                                       x += '<div class="bi-star-fill"></div>';
+                                   }
+                                   document.getElementById({{anime.anime_id}}).innerHTML = x;
+                               </script>
+                           </div>
+                           <!-- Anime description-->
+                           {{anime.description}}
+                       </div>
+                   </div>
+                   <!-- Actions -->
+                   <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                       <div class="text-center">
+                           <a class="btn btn-outline-dark mt-auto" href="home/{{anime.anime_id}}">Start watching</a>                                    
+                       </div>
+                   </div>
+               </div>
+           </div>
+           {% endfor %}
+       </div>
+   </div>
+</section>
+
+<script>
+   const eventBox = document.getElementById("event-box");
+   var eventDate = "{{anime_today_time}}"
+   console.log(eventDate)
+
+   const countdownBox = document.getElementById("countdownBox")
+
+   var digits = eventDate.split(',');
+   var realDigits = digits.map(Number)
+
+   const eventTime = new Date();
+   eventTime.setHours(realDigits[0], realDigits[1], realDigits[2])
+   console.log(eventTime)
+   eventTime.setDate(eventTime.getDate()+parseInt("{{day}}"))
+   console.log(eventTime.getDate())
+   console.log(eventTime)
+
+   const myCountdown = setInterval(()=>{
+      const now = new Date().getTime()
+      // console.log(now)
+
+      const diff = eventTime - now
+      // console.log(diff)
+
+      const d = Math.floor(eventTime / (1000 * 60 * 60 * 24) - (now / (1000 * 60 * 60 * 24)))
+      const h = Math.floor((eventTime / (1000 * 60 * 60) - (now / (1000 * 60 * 60))) % 24)
+      const m = Math.floor((eventTime / (1000 * 60) - (now / (1000 * 60))) % 60)
+      const s = Math.floor((eventTime / (1000) - (now / (1000))) % 60)
+      // console.log(s)
+
+      if (diff>0) {
+         if (d > 0) {   // ถ้าวันมากกว่า 0 ให้ใส่วันไม่งั้นเอาวันออก
+            countdownBox.innerHTML = d + " days " + h + " hours " + m + " minutes " + s + " seconds"
+         } else {
+            countdownBox.innerHTML = h + " hours " + m + " minutes " + s + " seconds"
+         }         
+      } else {
+         clearInterval(myCountdown)
+      }
+
+      }, 1000)
+
+</script>
+
+{% endblock %}

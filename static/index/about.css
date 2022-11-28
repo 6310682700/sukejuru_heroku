@@ -1,0 +1,15 @@
+body {
+    font-family: 'Noto Fonts', Noto Sans;
+    background-size: 200% 100% ;
+    height: 100vh;
+    font-weight : bold;
+}
+h2 {
+    font-family: 'Noto Fonts', Noto Sans;
+    font-size : x-large;
+    font-weight: bold;
+}
+p {
+    font-size : larger;
+    font-family : "Georgia" , serif;
+}

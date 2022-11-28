@@ -1,0 +1,61 @@
+
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  
+  body {
+      font-family: font-family;
+      font-size: font-size;
+      background-color:white;
+      height: 100vh
+  }
+  
+  .user {
+      width: 90%;
+      max-width: 340px;
+      margin: 10vh auto;
+  }
+  
+  .user_title {
+      font-size: font-size;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: Black;
+  }
+  
+  .form {
+      margin-top: 40px;
+      border-radius: 6px;
+      overflow: hidden;
+      opacity: 0;
+  }
+  
+  .form--no {
+      animation: NO 1s ease-in-out;
+      opacity: 1;
+  }
+  
+  .form_input {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      font-family: font-family;
+      border: 0;
+      outline: 0;
+      
+
+    }
+  
+  .btn {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      font-family: font-family;
+      outline: 0;
+      border: 0;
+      color: white;
+      background-color: black;
+
+  }

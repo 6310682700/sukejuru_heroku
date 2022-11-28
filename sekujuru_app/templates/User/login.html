@@ -1,0 +1,27 @@
+{% block body %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'index/login.css' %}" type = "text/css">
+
+<div class="user">
+    <h1 class="user_title">LOGIN</h1>
+  {% if message %}
+      <div style="color: red">{{ message }}</div>
+  {% endif %}
+  <form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    <form class="form">
+      <div class="form_group">
+          <input type="text" name="username" placeholder="Username" class="form_input" />
+      </div>
+      
+      <div class="form_group">
+          <input type="password" name="password" placeholder="Password" class="form_input" />
+      </div>
+      
+      <button class="btn" type="submit" value="Login">Login</button>
+      <div>Not have an account?
+      <a href="/register">Register</a></div>
+  </form>
+  </div>
+  {% endblock %}

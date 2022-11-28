@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'index/home.css' %}" type = "text/css">
+
+{% block content %}
+
+<body>
+    <div style="padding-left : 40px ; padding-top : 20px">
+        <h3>{{anime.anime_name}}</h3>
+        <img src={{anime.anime_image}} style="width:20%;"  alt="..." />
+        <br></br>
+        
+        {% if request.user.is_authenticated %}
+        <h5>Rate</h5>
+        <div class="row">
+            <div class="col">
+                <input type="button" value="{{ user_rating.rating }}" id="load" style="display: none;"></input>
+                <form class="rate-form" action="" method="POST" id="{{anime.anime_name}}">
+                    {% csrf_token %}
+                    <button type="submit" class="fa fa-star fa-2x rating-btn" id="first"></button>
+                    <button type="submit" class="fa fa-star fa-2x rating-btn" id="second"></button>
+                    <button type="submit" class="fa fa-star fa-2x rating-btn" id="third"></button>
+                    <button type="submit" class="fa fa-star fa-2x rating-btn" id="fourth"></button>
+                    <button type="submit" class="fa fa-star fa-2x rating-btn" id="fifth"></button>
+                </form>
+            </div>
+            <div id="confirm-box"></div>
+        </div>
+        <br></br>
+        {% endif %}
+
+        <h5>Description</h5>
+        {% if anime.description is not None %}
+        <a>{{ anime.description }}</a>
+        {% else %}
+        <a>-</a>
+        {% endif %}
+        <br></br>
+
+        <h5>Platform</h5>
+        <form action="{% url 'anime_page' anime.anime_id %}" method="get">
+            {% for pf in platform%}
+            <input class="btn btn-outline-dark mt-auto" type="submit" value={{pf.name}} name="platform">
+            {% endfor %}
+        </form>
+
+        <h5>Genre</h5>
+        <form action="{% url 'search' %}" method="get">
+        {% for gn in genre %}        
+            <input class="btn btn-outline-dark mt-auto" type="submit" value={{gn.name}} name="genre">
+        {% endfor %}
+        </form>
+
+        <h5>Season</h5>
+        <form action="{% url 'search' %}" method="get">
+            {% for ss in season %}
+            <input class="btn btn-outline-dark mt-auto" type="submit" value={{ss.name}} name="season">
+            {% endfor %}
+        </form>
+        <br>
+
+        <h5>EPISODE</h5> <p><u>{{current_platform}}</u></p>
+        {% if episode == None %}
+        <p>Comming Soon</p>
+        {% else %}
+        {% for epi in episode %}
+        <a href="{{epi.link}}"> Episode {{epi.episode}}</a> <br>
+        {% endfor %}
+        {% endif %}
+    </div>
+</body>
+
+
+{% endblock %}
